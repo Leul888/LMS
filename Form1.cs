@@ -17,39 +17,16 @@ namespace LMS
         {
             InitializeComponent();
         }
+        SqlConnection Con = new SqlConnection(@" Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=""C:\Users\DSU\OneDrive - Dakota State University\Desktop\LMS PROJECT\LMS\Database1.mdf"";Integrated Security=True");
 
         private void Form1_Load(object sender, EventArgs e)
         {
 
         }
-        SqlConnection conn = new SqlConnection("Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=\"|DataDirectory|\\Database.mdf\";Integrated Security=True");
-        SqlCommand cmd;
-        SqlDataReader dr;
-        private string getUserName()
-        {
-            conn.Open();
-            String syntax = "SELECT Value FROM systemTable where Property ='UserName'";
-            cmd = new SqlCommand(syntax, conn);
-            dr = cmd.ExecuteReader();   
-            dr.Read();
-            String temp = dr[0].ToString();
-            conn.Close();
-            return temp;
 
-        }
+        
+ 
 
-        private string getpassword()
-        {
-            conn.Open();
-            String syntax = "SELECT Value FROM systemTable where Property ='Password'";
-            cmd = new SqlCommand(syntax, conn);
-            dr = cmd.ExecuteReader();
-            dr.Read(); 
-            String temp = dr[0].ToString();
-            conn.Close();
-            return temp;
-
-        }
         private void btnclose_Click(object sender, EventArgs e)
         {
             this.Close();
@@ -57,48 +34,56 @@ namespace LMS
 
         private void textUsername_MouseEnter(object sender, EventArgs e)
         {
-            if (textUsername.Text == "Username")
+            if (UnameTb.Text == "Username")
             {
-                textUsername.Clear();
+                UnameTb.Clear();
             }
         }
 
         private void textUsername_MouseClick(object sender, MouseEventArgs e)
         {
-            if (textUsername.Text == "Username")
+            if (UnameTb.Text == "Username")
             {
-                textUsername.Clear();
+                UnameTb.Clear();
             }
         }
 
         private void textPassword_MouseClick(object sender, MouseEventArgs e)
         {
-            if(textPassword.Text == "Password")
+            if(PassTb.Text == "Password")
             {
-                textPassword.Clear();
-                textPassword.PasswordChar = '*';
+                PassTb.Clear();
+                PassTb.PasswordChar = '*';
             }
         }
 
         private void btnlogin_Click(object sender, EventArgs e)
         {
-            
-            String Uname = getUserName(), Upass = getpassword(), name, pass;
-            name=textUsername.Text;
-            pass = textPassword.Text;
-            if(name.Equals(Uname)&& pass.Equals(Upass))
+
+
+            Con.Open();
+            SqlDataAdapter sda = new SqlDataAdapter("select count(*) from LibrarianTbl where LibName='"+UnameTb.Text+"' and LibPassword='"+PassTb.Text+"'",Con);
+            DataTable dt = new DataTable();
+            sda .Fill(dt);
+            if (dt.Rows[0][0].ToString() == "1")
             {
-                //login
-                //MessageBox.Show("Login Success");
-                AppBody obj=new AppBody();
+                AppBody obj = new AppBody();
                 this.Hide();
                 obj.Show();
+
             }
             else
             {
-                //login failed
-                MessageBox.Show("Login Failed");
+                MessageBox.Show("Wrong Username or Password");
             }
+            Con.Close();
+            
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            UnameTb.Text = "";
+            PassTb.Text = "";
         }
     }
 }
