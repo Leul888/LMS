@@ -12,13 +12,14 @@ using System.Data.SqlClient;
 
 namespace LMS
 {
+    //multiple inheritance
     public partial class IssueBook : Form ,ILibraryTransaction
     {
         SqlConnection Con = new SqlConnection(@" Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=""C:\Users\DSU\OneDrive - Dakota State University\Desktop\LMS PROJECT\LMS\Database1.mdf"";Integrated Security=True");
 
         public void ExecuteTransaction()
         {
-            // Implementation of issuing a book
+            
 
             // Get the selected book details
             string selectedBook = bookCb.SelectedValue.ToString();

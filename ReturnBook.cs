@@ -91,24 +91,68 @@ namespace LMS
 
         private void IssueBookForm_Click(object sender, EventArgs e)
         {
-            if (ReturnNumTb.Text == "" || StdNameTb.Text == "")
+            if (IssueIdtextbox.Text=="")
             {
                 MessageBox.Show("Missing Info");
 
             }
             else
             {
-                string issuedate = IssueDate.Value.Day.ToString() + "/" + IssueDate.Value.Month.ToString() + "/" + IssueDate.Value.Year.ToString();
-                string returndate = ReturnDate.Value.Day.ToString() + "/" + IssueDate.Value.Month.ToString() + "/" + IssueDate.Value.Year.ToString();
+              //  string issuedate = IssueDate.Value.Day.ToString() + "/" + IssueDate.Value.Month.ToString() + "/" + IssueDate.Value.Year.ToString();
+              //  string returndate = ReturnDate.Value.Day.ToString() + "/" + IssueDate.Value.Month.ToString() + "/" + IssueDate.Value.Year.ToString();
 
                 Con.Open();
-                SqlCommand cmd = new SqlCommand("Insert into ReturnTbl values(" + ReturnNumTb.Text + "," + stdCb.SelectedItem.ToString() + ",'" + StdNameTb.Text + "','" + stddepTb.Text + "','" + phoneTb.Text + "','" + bookCb.SelectedValue.ToString() + "')", Con);
-                cmd.ExecuteNonQuery();
+                IssueData issue = null;
+                using (SqlCommand cmd = new SqlCommand("SELECT * FROM IssueTbl WHERE IsuueNum = @value", Con))
+                {
+                    cmd.Parameters.AddWithValue("@value", IssueIdtextbox.Text);
+                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            int issueId = Convert.ToInt32(reader["IsuueNum"]);
+                            string studentId = reader["StdId"].ToString();
+                            string studentName = reader["StdName"].ToString();
+                            string studentDept = reader["StdDept"].ToString();
+                            string studentPhone = reader["StdPhone"].ToString();
+                            string bookIssued = reader["BookIssued"].ToString();
+                            string IssueDate = reader["IssueDate"].ToString();
+                            issue = new IssueData(issueId, studentId, studentName, studentDept, studentPhone, bookIssued, IssueDate);
+                            //------------------------------------------------------
+                            //cmd.ExecuteNonQuery();
+                        }
+                        
+                    }
+
+                }
+                using (SqlCommand cmd1 = new SqlCommand("INSERT INTO ReturnTbl (StdId,StdName,StdDept,StdPhone,Bookreturned,IssueDate) VALUES (@StdId,@StdName,@StdDept,@StdPhone,@Bookissued,@IssueDate)", Con))
+                {
+                    cmd1.Parameters.AddWithValue("@StdId", issue.studentId);
+                    cmd1.Parameters.AddWithValue("@StdName", issue.studentName);
+                    cmd1.Parameters.AddWithValue("@StdDept", issue.studentDept);
+                    cmd1.Parameters.AddWithValue("@StdPhone", issue.studentPhone);
+                    cmd1.Parameters.AddWithValue("@Bookissued", issue.bookIssued);
+                    cmd1.Parameters.AddWithValue("@IssueDate", issue.issueDate);
+
+                    cmd1.ExecuteNonQuery();
+                }
+                string query = "delete from IssueTbl where IsuueNum = " + issue.issueId + ";";
+                SqlCommand cmd2 = new SqlCommand(query, Con);
+                cmd2.ExecuteNonQuery();
+
+
+                //SqlCommand cmd = new SqlCommand("Insert into ReturnTbl(StdName) values("+StdNameTb.Text +")", Con);
+                //cmd.ExecuteNonQuery();
                 MessageBox.Show("Book Successfully Returned!");
                 Con.Close();
                 UpdateBook();
                 populate();
                 populatereturn();
+                
+
+
+
+
 
             }
         }
@@ -143,6 +187,21 @@ namespace LMS
 
         private void label12_Click(object sender, EventArgs e)
         {
+
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            Con.Open();
+            using (SqlCommand cmd = new SqlCommand("delete from ReturnTbl", Con))               
+            {      
+                cmd .ExecuteNonQuery();
+            }
+            Con.Close();
+            UpdateBook();
+            populate();
+            populatereturn();
+
 
         }
     }

@@ -87,7 +87,7 @@
     <Compile Include="IssueBook.Designer.cs">
       <DependentUpon>IssueBook.cs</DependentUpon>
     </Compile>
-    <Compile Include="IssueTransaction.cs" />
+    <Compile Include="IssueData.cs" />
     <Compile Include="Librarian.cs">
       <SubType>Form</SubType>
     </Compile>

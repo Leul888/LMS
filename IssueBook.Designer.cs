@@ -227,9 +227,9 @@
             this.label1.Location = new System.Drawing.Point(35, 138);
             this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(52, 24);
+            this.label1.Size = new System.Drawing.Size(104, 24);
             this.label1.TabIndex = 14;
-            this.label1.Text = "Usn:";
+            this.label1.Text = "StudentId:";
             this.label1.Click += new System.EventHandler(this.label1_Click);
             // 
             // label7
